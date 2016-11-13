@@ -14,35 +14,24 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-from subprocess import call
-from distutils.core import setup
-from distutils.extension import Extension
-from distutils.command.clean import clean
-from Cython.Distutils import build_ext
+from setuptools import setup, find_packages
+from setuptools.extension import Extension
 from Cython.Build import cythonize
 
-def tryremove(filename):
-    if not os.path.isfile(filename):
-        return
-    try:
-        os.remove(filename)
-    except OSError as e:
-        print(e)
-
-class Clean(clean):
-    side_effects = [
-        "mpv.c",
-    ]
-
-    def run(self):
-        for f in self.side_effects:
-            tryremove(f)
-        clean.run(self)
+extensions=[
+        Extension(
+            "mpv",
+            ["pympv/mpv.pyx"],
+            libraries=['mpv']
+        )
+]
 
 setup(
-    cmdclass = {
-        "build_ext": build_ext,
-        "clean": Clean,
-    },
-    ext_modules = cythonize([Extension("mpv", ["mpv.pyx"], libraries=['mpv'])])
+    name='pympv',
+    version='0.1',
+    packages=find_packages(),
+    ext_modules = cythonize(extensions),
+    setup_requires=[
+        'Cython',
+    ],
 )
