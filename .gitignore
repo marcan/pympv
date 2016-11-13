@@ -1,2 +1,5 @@
-build
+*.egg-info
+build/
+dist/
+mpv.so
 pympv/mpv.c
