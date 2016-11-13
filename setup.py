@@ -16,22 +16,23 @@
 import os
 from setuptools import setup, find_packages
 from setuptools.extension import Extension
-from Cython.Build import cythonize
 
+try:
+    from Cython.Build import cythonize
+    USE_CYTHON = True
+except ImportError:
+    USE_CYTHON = False
+
+ext = 'pyx' if USE_CYTHON else 'c'
 extensions=[
-        Extension(
-            "mpv",
-            ["pympv/mpv.pyx"],
-            libraries=['mpv']
-        )
+        Extension("mpv", ["pympv/mpv.%s" % ext], libraries=['mpv']),
 ]
+if USE_CYTHON:
+    extensions=cythonize(extensions)
 
 setup(
     name='pympv',
     version='0.1',
     packages=find_packages(),
-    ext_modules = cythonize(extensions),
-    setup_requires=[
-        'Cython',
-    ],
+    ext_modules = extensions,
 )
