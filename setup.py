@@ -14,44 +14,62 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-from setuptools import setup, find_packages
-from setuptools.extension import Extension
+import sys
+from glob import glob
+from os.path import join
 
-try:
-    from Cython.Build import cythonize
-    USE_CYTHON = True
-except ImportError:
-    USE_CYTHON = False
+from Cython.Build import cythonize
+from setuptools import Extension, find_packages, setup
 
-ext = 'pyx' if USE_CYTHON else 'c'
-extensions=[
-    Extension('mpv', ['mpv.%s' % ext], libraries=['mpv']),
-]
-if USE_CYTHON:
-    extensions=cythonize(extensions, force=True)
+extra_data = {}
+extensions = [Extension("mpv", ["mpv.pyx"], libraries=["mpv"])]
+
+if set(["setup.py", "--version", "-V"]) >= set(sys.argv):
+    extensions = []
+
+if set(["bdist_wheel", "--plat-name", "win_amd64"]) <= set(sys.argv):
+    extra_data["data_files"] = [
+        ("Scripts", ["mpv.dll"]),
+        ("libs", ["mpv.lib"]),
+        ("include", glob("mpv/*")),
+    ]
+    extensions = [
+        Extension(
+            "mpv",
+            ["mpv.pyx"],
+            libraries=["mpv"],
+            library_dirs=[os.curdir],
+            include_dirs=[join(os.curdir, "mpv")],
+        )
+    ]
+
+extensions = cythonize(extensions, force=True)
+
 
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
+
 setup(
-        name='pympv',
-        version='0.6.0',
-        description='Python bindings for the libmpv library',
-        # This is supposed to be reST. Cheating by using a common subset of
-        # reST and Markdown...
-        long_description=read('README.md'),
-        author='Andre D',
-        author_email='andre@andred.ca',
-        maintainer='Hector Martin',
-        maintainer_email='marcan@marcan.st',
-        url='https://github.com/marcan/pympv',
-        classifiers=[
-            'Development Status :: 3 - Alpha',
-            'Programming Language :: Cython',
-            'Topic :: Multimedia :: Sound/Audio :: Players',
-            'Topic :: Multimedia :: Video',
-            'Topic :: Software Development :: Libraries',
-            'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)'
-        ],
-        ext_modules=extensions
+    name="pympv",
+    version="0.7.0",
+    description="Python bindings for the libmpv library",
+    # This is supposed to be reST. Cheating by using a common subset of
+    # reST and Markdown...
+    long_description=read("README.md"),
+    author="Andre D",
+    author_email="andre@andred.ca",
+    maintainer="Hector Martin",
+    maintainer_email="marcan@marcan.st",
+    url="https://github.com/marcan/pympv",
+    classifiers=[
+        "Development Status :: 3 - Alpha",
+        "Programming Language :: Cython",
+        "Topic :: Multimedia :: Sound/Audio :: Players",
+        "Topic :: Multimedia :: Video",
+        "Topic :: Software Development :: Libraries",
+        "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+    ],
+    ext_modules=extensions,
+    **extra_data
 )

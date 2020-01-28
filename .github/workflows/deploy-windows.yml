@@ -1,0 +1,74 @@
+name: deploy-windows
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+
+  deploy-binaries:
+
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+
+    - name: Download libmpv
+      run: |
+        $VERSION = "libmpv/mpv-dev-x86_64-20191110-git-35de8ea.7z"
+        $URL = "https://sourceforge.net/projects/mpv-player-windows/files"
+        curl -L -o libmpv.7z "$URL/$VERSION"
+        7z x libmpv.7z
+
+    - name: Set VS environment variables
+      run: |
+        $VsPath = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer"
+        echo "::add-path::$VsPath"
+
+    - name: Set MSVC x86_64 linker path
+      run: |
+        $LinkGlob = "VC\Tools\MSVC\*\bin\Hostx64\x64"
+        $LinkPath = vswhere -latest -products * -find "$LinkGlob" |
+                    Select-Object -Last 1
+        echo "::add-path::$LinkPath"
+
+    - name: Create the libmpv zip
+      shell: cmd
+      run: |
+        lib /def:mpv.def /machine:x64 /out:mpv.lib
+        ren mpv-1.dll mpv.dll
+        ren include mpv
+        7z a libmpv.zip mpv/ mpv.dll mpv.lib
+
+    - name: Install Python 3.7 version
+      uses: actions/setup-python@v1
+      with:
+        python-version: '3.7'
+        architecture: 'x64'
+
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install setuptools wheel
+        pip install --upgrade cython
+
+    - name: Create Python wheel
+      run: |
+        python setup.py bdist_wheel --plat-name win_amd64 --python-tag cp37
+
+    - name: Get the package version
+      id: data
+      run: |
+        $VERSION = python setup.py --version | Out-String
+        echo "::set-output name=version::$VERSION"
+
+    - name: Create a Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          libmpv.zip
+          dist/pympv-${{ steps.data.outputs.version }}-cp37-cp37m-win_amd64.whl
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
