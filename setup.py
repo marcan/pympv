@@ -57,6 +57,7 @@ setup(
     # This is supposed to be reST. Cheating by using a common subset of
     # reST and Markdown...
     long_description=read("README.md"),
+    long_description_content_type='text/markdown',
     author="Andre D",
     author_email="andre@andred.ca",
     maintainer="Marcin Kurczewski",
