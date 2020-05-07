@@ -1,8 +1,8 @@
-pympv
-=====
+pympv2
+======
 A python wrapper for libmpv.
 
-To use::
+To use:
 
     import sys
     import mpv
@@ -44,5 +44,5 @@ libmpv is a client library for the media player mpv
 
 For more info see: https://github.com/mpv-player/mpv/blob/master/libmpv/client.h
 
-pympv was originally written by Andre D, and the PyPI package is maintained
-by Hector Martin.
+pympv2 was forked due to lack of activity from pympv created by Hector Martin,
+and original pympv package was written Andre D.

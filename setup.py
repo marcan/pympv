@@ -51,7 +51,7 @@ def read(fname):
 
 
 setup(
-    name="pympv",
+    name="pympv2",
     version="0.7.0",
     description="Python bindings for the libmpv library",
     # This is supposed to be reST. Cheating by using a common subset of
@@ -59,9 +59,9 @@ setup(
     long_description=read("README.md"),
     author="Andre D",
     author_email="andre@andred.ca",
-    maintainer="Hector Martin",
-    maintainer_email="marcan@marcan.st",
-    url="https://github.com/marcan/pympv",
+    maintainer="Marcin Kurczewski",
+    maintainer_email="rr-@sakuya.pl",
+    url="https://github.com/bubblesub/pympv2",
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Programming Language :: Cython",
