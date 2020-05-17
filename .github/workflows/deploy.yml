@@ -1,4 +1,4 @@
-name: deploy-windows
+name: deploy
 
 on:
   push:
@@ -7,17 +7,17 @@ on:
 
 jobs:
 
-  deploy-binaries:
+  create-windows-wheel:
 
     runs-on: windows-latest
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v1
+      uses: actions/checkout@v2
 
     - name: Download libmpv
       run: |
-        $VERSION = "libmpv/mpv-dev-x86_64-20191110-git-35de8ea.7z"
+        $VERSION = "libmpv/mpv-dev-x86_64-20200524-git-685bd6a.7z"
         $URL = "https://sourceforge.net/projects/mpv-player-windows/files"
         curl -L -o libmpv.7z "$URL/$VERSION"
         7z x libmpv.7z
@@ -58,17 +58,41 @@ jobs:
       run: |
         python setup.py bdist_wheel --plat-name win_amd64 --python-tag cp37
 
-    - name: Get the package version
-      id: data
-      run: |
-        $VERSION = python setup.py --version | Out-String
-        echo "::set-output name=version::$VERSION"
-
-    - name: Create a Release
-      uses: softprops/action-gh-release@v1
+    - name: Upload Windows wheel
+      uses: actions/upload-artifact@v2
       with:
-        files: |
-          libmpv.zip
-          dist/pympv-${{ steps.data.outputs.version }}-cp37-cp37m-win_amd64.whl
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        name: dist
+        path: dist
+
+  deploy-binaries:
+
+    needs: create-windows-wheel
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Download Windows wheel
+      uses: actions/download-artifact@v2
+
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install setuptools twine
+        pip install --upgrade cython
+
+    - name: Release source code
+      run: |
+        python setup.py sdist
+
+    - name: Twine check
+      run: |
+        python -m twine check dist/*
+
+    - name: Publish distribution to PyPI
+      uses: pypa/gh-action-pypi-publish@master
+      with:
+        user: __token__
+        password: ${{ secrets.pypi_token }}
