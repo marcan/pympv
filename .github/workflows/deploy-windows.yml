@@ -17,7 +17,7 @@ jobs:
 
     - name: Download libmpv
       run: |
-        $VERSION = "libmpv/mpv-dev-x86_64-20191110-git-35de8ea.7z"
+        $VERSION = "libmpv/mpv-dev-x86_64-20200524-git-685bd6a.7z"
         $URL = "https://sourceforge.net/projects/mpv-player-windows/files"
         curl -L -o libmpv.7z "$URL/$VERSION"
         7z x libmpv.7z
