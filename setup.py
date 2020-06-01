@@ -18,8 +18,14 @@ import sys
 from glob import glob
 from os.path import join
 
-from Cython.Build import cythonize
 from setuptools import Extension, find_packages, setup
+
+try:
+    from Cython.Build import cythonize
+
+    USE_CYTHON = True
+except ImportError:
+    USE_CYTHON = False
 
 extra_data = {}
 extensions = [Extension("mpv", ["mpv.pyx"], libraries=["mpv"])]
@@ -43,7 +49,8 @@ if set(["bdist_wheel", "--plat-name", "win_amd64"]) <= set(sys.argv):
         )
     ]
 
-extensions = cythonize(extensions, force=True)
+if USE_CYTHON:
+    extensions = cythonize(extensions, force=True)
 
 
 def read(fname):
@@ -57,7 +64,7 @@ setup(
     # This is supposed to be reST. Cheating by using a common subset of
     # reST and Markdown...
     long_description=read("README.md"),
-    long_description_content_type='text/markdown',
+    long_description_content_type="text/markdown",
     author="Andre D",
     author_email="andre@andred.ca",
     maintainer="Marcin Kurczewski",
