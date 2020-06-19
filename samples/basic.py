@@ -1,11 +1,20 @@
-pympv
-=====
-A python wrapper for libmpv.
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#### Basic usage
-```python
 import sys
+
 import mpv
+
 
 def main(args):
     if len(args) != 1:
@@ -40,13 +49,3 @@ if __name__ == '__main__':
     except mpv.MPVError as e:
         print(str(e))
         exit(1)
-```
-
-More examples can be found in the [samples](samples) directory.
-
-libmpv is a client library for the media player mpv
-
-For more info see: https://github.com/mpv-player/mpv/blob/master/libmpv/client.h
-
-pympv was originally written by Andre D, and the PyPI package is maintained
-by Hector Martin.
