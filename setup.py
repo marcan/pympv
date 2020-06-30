@@ -43,7 +43,7 @@ if set(["bdist_wheel", "--plat-name", "win_amd64"]) <= set(sys.argv):
     extensions = [
         Extension(
             "mpv",
-            ["mpv.pyx"],
+            [extension_src],
             libraries=["mpv"],
             library_dirs=[os.curdir],
             include_dirs=[join(os.curdir, "mpv")],
