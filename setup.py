@@ -23,11 +23,13 @@ from setuptools import Extension, find_packages, setup
 try:
     from Cython.Build import cythonize
     USE_CYTHON = True
+    extension_src = "mpv.pyx"
 except ImportError:
     USE_CYTHON = False
+    extension_src = "mpv.c"
 
 extra_data = {}
-extensions = [Extension("mpv", ["mpv.pyx"], libraries=["mpv"])]
+extensions = [Extension("mpv", [extension_src], libraries=["mpv"])]
 
 if set(["setup.py", "--version", "-V"]) >= set(sys.argv):
     extensions = []
