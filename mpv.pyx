@@ -293,7 +293,7 @@ cdef class Event(object):
         return _strdec(name_c)
 
     cdef _init(self, mpv_event* event, ctx):
-        cdef uint64_t ctxid = <uint64_t>id(ctx)
+        ctxid = id(ctx)
         self.id = event.event_id
         self.data = self._data(event)
         userdata = _reply_userdatas[ctxid].get(event.reply_userdata, None)
@@ -333,8 +333,8 @@ class MPVError(Exception):
 class PyMPVError(Exception):
     pass
 
-cdef _callbacks = dict()
-cdef _reply_userdatas = dict()
+cdef dict _callbacks = {}
+cdef dict _reply_userdatas = {}
 
 class _ReplyUserData(object):
     def __init__(self, data):
@@ -723,7 +723,7 @@ cdef class Context(object):
         return pipe
 
     def __cinit__(self):
-        cdef uint64_t ctxid = <uint64_t>id(self)
+        ctxid = id(self)
         with nogil:
             self._ctx = mpv_create()
         if not self._ctx:
@@ -777,7 +777,7 @@ cdef class Context(object):
     def shutdown(self):
         if self._ctx == NULL:
             return
-        cdef uint64_t ctxid = <uint64_t>id(self)
+        ctxid = id(self)
         with nogil:
             mpv_terminate_destroy(self._ctx)
         self.callbackthread.shutdown()
