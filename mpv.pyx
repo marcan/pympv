@@ -49,23 +49,13 @@ if _CAPI_MAJOR != _REQUIRED_CAPI_MAJOR or _CAPI_MINOR < _MIN_CAPI_MINOR:
 cdef extern from "Python.h":
     void PyEval_InitThreads()
 
-_is_py3 = sys.version_info >= (3,)
-_strdec_err = "surrogateescape" if _is_py3 else "strict"
 # mpv -> Python
 def _strdec(s):
-    try:
-        return s.decode("utf-8", _strdec_err)
-    except UnicodeDecodeError:
-        # In python2, bail to bytes on failure
-        return bytes(s)
+    return s.decode("utf-8", "surrogateescape")
 
 # Python -> mpv
 def _strenc(s):
-    try:
-        return s.encode("utf-8", _strdec_err)
-    except UnicodeEncodeError:
-        # In python2, assume bytes and walk right through
-        return s
+    return s.encode("utf-8", "surrogateescape")
 
 PyEval_InitThreads()
 
