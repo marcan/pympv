@@ -48,9 +48,6 @@ if _CAPI_MAJOR != _REQUIRED_CAPI_MAJOR or _CAPI_MINOR < _MIN_CAPI_MINOR:
             (_REQUIRED_CAPI_MAJOR, _MIN_CAPI_MINOR, _CAPI_MAJOR, _CAPI_MINOR)
     )
 
-cdef extern from "Python.h":
-    void PyEval_InitThreads()
-
 # mpv -> Python
 cdef str _strdec(bytes s):
     return s.decode("utf-8", "surrogateescape")
@@ -59,6 +56,10 @@ cdef str _strdec(bytes s):
 cdef bytes _strenc(str s):
     return s.encode("utf-8", "surrogateescape")
 
+# TODO: Remove this call once Python 3.6 is EOL: it is automatically called by
+# Py_Initialize() since Python 3.7 and will be removed in Python 3.11.
+cdef extern from "Python.h":
+    void PyEval_InitThreads()
 PyEval_InitThreads()
 
 class Errors:
