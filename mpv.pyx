@@ -52,11 +52,11 @@ cdef extern from "Python.h":
     void PyEval_InitThreads()
 
 # mpv -> Python
-def _strdec(s):
+cdef str _strdec(bytes s):
     return s.decode("utf-8", "surrogateescape")
 
 # Python -> mpv
-def _strenc(s):
+cdef bytes _strenc(str s):
     return s.encode("utf-8", "surrogateescape")
 
 PyEval_InitThreads()
