@@ -1,6 +1,15 @@
 pympv
 =====
 
+## 0.8.0
+- Update to libmpv API 2.0, removing previously deprecated APIs
+- Optimise string conversion functions with Cython
+- Give str its Python 3 meaning
+- Simplify string conversions, since python2 is no more
+
+## 0.7.1
+- Extract examples into its own directory
+
 ## 0.6.0
 - Add support for the render API
 - Deprecate the legacy opengl-cb API
