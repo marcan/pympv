@@ -756,10 +756,10 @@ cdef class Context(object):
     def __dealloc__(self):
         self.shutdown()
 
-cdef void *_c_getprocaddress(void *ctx, const char *name) with gil:
+cdef void *_c_getprocaddress(void *ctx, const char *name) noexcept with gil:
     return <void *><intptr_t>(<object>ctx)(name)
 
-cdef void _c_updatecb(void *ctx) with gil:
+cdef void _c_updatecb(void *ctx) noexcept with gil:
     (<object>ctx)()
 
 DEF MAX_RENDER_PARAMS = 32
@@ -1039,7 +1039,7 @@ class CallbackThread(Thread):
         except Exception as e:
             sys.stderr.write("pympv error during callback: %s\n" % e)
 
-cdef void _c_callback(void* d) with gil:
+cdef void _c_callback(void* d) noexcept with gil:
     cdef uint64_t name = <uint64_t>d
     callback = _callbacks.get(name)
     callback.call()
