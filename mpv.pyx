@@ -804,7 +804,7 @@ cdef void *get_pointer(const char *name, object obj):
     cdef void *p
     if PyCapsule_IsValid(obj, name):
         p = PyCapsule_GetPointer(obj, name)
-    elif isinstance(obj, int) or isinstance(obj, long) and obj:
+    elif isinstance(obj, int) and obj:
         p = <void *><intptr_t>obj
     else:
         raise PyMPVError("Unknown or invalid pointer object: %r" % obj)
